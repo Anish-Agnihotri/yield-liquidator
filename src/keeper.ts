@@ -1,14 +1,22 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
 import Positions from "./positions";
-import { IKeeper } from "./common/interfaces";
 import Liquidations from "./liquidations";
+import { IKeeper } from "./common/interfaces";
+import { Wallet } from "@ethersproject/wallet";
+import { JsonRpcProvider } from "@ethersproject/providers";
 
 export default class Keeper {
   // Ethers setup
   provider: JsonRpcProvider;
+  wallet: Wallet;
 
   // Keeper state
-  state: IKeeper;
+  state: IKeeper = {
+    gasPrice: null,
+    blockNumber: null,
+    positions: null,
+    auctions: null,
+    pendingLiquidations: null
+  };
 
   // Providers
   positions: Positions;
@@ -16,8 +24,10 @@ export default class Keeper {
 
   constructor(rpc: string, network: string) {
     this.provider = new JsonRpcProvider(rpc);
-    this.positions = new Positions(this.provider, network);
-    this.liquidations = new Liquidations(this.provider, network);
+    this.wallet = new Wallet(process.env.PRIVATE_KEY, this.provider);
+
+    this.positions = new Positions(this.wallet, network);
+    this.liquidations = new Liquidations(this.wallet, network);
   }
 
   async onBlock() {
@@ -26,6 +36,7 @@ export default class Keeper {
 
     // Collect block number
     this.state.blockNumber = await this.provider.getBlockNumber();
+    console.log(this.state.blockNumber);
 
     // Remove or bump all transactions
 

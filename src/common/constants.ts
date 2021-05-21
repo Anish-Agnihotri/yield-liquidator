@@ -9,5 +9,9 @@ export const CONTRACT_ADDRESSES = {
   kovan: {
     controller: "0xFCDF6d4de26C53115610D9FBdaFD93CBDb843Ea2",
     liquidations: "0x6E254e9130D4593561161DcFD0Ea7969C096AEfA"
+  },
+  development: {
+    controller: "0xB275cFd6744866977e386716dD3Aafa315Ac4e9c",
+    liquidations: "0x65d492098bC0F72A802FA3b491A67FdE59CeaB20"
   }
 };

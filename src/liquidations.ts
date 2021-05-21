@@ -1,6 +1,6 @@
 import { IPosition, IPendingTransaction } from "./common/interfaces";
 import { Contract } from "@ethersproject/contracts";
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { Wallet } from "@ethersproject/wallet";
 import { CONTRACT_ADDRESSES } from "./common/constants";
 import { ABI_LIQUIDATIONS } from "./common/abi";
 
@@ -11,11 +11,11 @@ export default class Liquidations {
   // Pending liquidation transactions
   pendingLiquidations: Record<string, IPendingTransaction> = {};
 
-  constructor(provider: JsonRpcProvider, network: string) {
+  constructor(wallet: Wallet, network: string) {
     this.liquidations = new Contract(
       CONTRACT_ADDRESSES[network].liquidations,
       ABI_LIQUIDATIONS,
-      provider
+      wallet
     );
   }
 
@@ -32,6 +32,7 @@ export default class Liquidations {
         // and existing tx does not exist
         !this.pendingLiquidations.hasOwnProperty(position)
       ) {
+        console.log("GENERATING A NEW LIQUIDATION");
         // Create liquidation w/ gas price
         const { hash } = await this.liquidations.liquidate(position, {
           gasPrice
