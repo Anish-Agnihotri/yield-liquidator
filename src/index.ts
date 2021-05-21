@@ -1,12 +1,11 @@
 import * as dotenv from "dotenv";
-import Liquidator from "./liquidator";
-import { KOVAN_CONTROLLER } from "./common/constants";
+import Keeper from "./keeper";
 
 dotenv.config();
 
 async function main() {
-  const liq = new Liquidator(process.env.RPC, KOVAN_CONTROLLER);
-  await liq.run();
+  const liq = new Keeper(process.env.RPC, "kovan");
+  await liq.onBlock();
 }
 
 main();

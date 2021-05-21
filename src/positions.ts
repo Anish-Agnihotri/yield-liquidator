@@ -1,29 +1,27 @@
-import { ABI_CONTROLLER } from "./common/abi";
 import { WETH_BYTES32 } from "./common/constants";
-import { IBorrower } from "./common/interfaces";
+import { IPosition } from "./common/interfaces";
 import { Contract } from "@ethersproject/contracts";
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { logger } from "./common/logging";
+import { CONTRACT_ADDRESSES } from "./common/constants";
+import { ABI_CONTROLLER } from "./common/abi";
+import { JsonRpcProvider } from "@ethersproject/providers";
 
-export default class Liquidator {
+export default class Positions {
   // Ethers setup
-  provider: JsonRpcProvider;
   controller: Contract;
 
   // Yield positions
-  positions: Record<string, IBorrower> = {};
+  positions: Record<string, IPosition> = {};
 
-  constructor(rpc: string, controller: string) {
-    this.provider = new JsonRpcProvider(rpc);
-    this.setupContracts(controller);
+  constructor(provider: JsonRpcProvider, network: string) {
+    this.controller = new Contract(
+      CONTRACT_ADDRESSES[network].controller,
+      ABI_CONTROLLER,
+      provider
+    );
   }
 
-  setupContracts(controller: string) {
-    // Setup controller
-    this.controller = new Contract(controller, ABI_CONTROLLER, this.provider);
-  }
-
-  async collectPositionByAddress(address): Promise<IBorrower> {
+  async collectPositionByAddress(address): Promise<IPosition> {
     const [collateralized, posted, debt] = await Promise.all([
       this.controller.isCollateralized(WETH_BYTES32, address),
       this.controller.posted(WETH_BYTES32, address),
@@ -33,7 +31,7 @@ export default class Liquidator {
     return { collateralized, posted, debt };
   }
 
-  async updateBorrowingAddresses() {
+  async updateBorrowingAddresses(): Promise<void> {
     logger.info("Updating borrowing addresses");
 
     const borrowFilter = this.controller.filters.Borrowed();
@@ -46,7 +44,7 @@ export default class Liquidator {
     });
   }
 
-  async updateBorrowingPositions() {
+  async updateBorrowingPositions(): Promise<void> {
     logger.info("Updating borrower positions");
 
     for (const address in this.positions) {
@@ -55,11 +53,9 @@ export default class Liquidator {
     }
   }
 
-  async run() {
-    this.provider.on("block", async () => {
-      await this.updateBorrowingAddresses();
-      await this.updateBorrowingPositions();
-      console.log(this.positions);
-    });
+  async collect() {
+    await this.updateBorrowingAddresses();
+    await this.updateBorrowingPositions();
+    return this.positions;
   }
 }
