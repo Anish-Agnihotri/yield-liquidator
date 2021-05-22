@@ -9,7 +9,14 @@ export interface IPosition {
   debt: BigNumber;
 }
 
-interface IAuction {}
+export interface IAuction {
+  // posted collateral
+  collateral: BigNumber;
+  // auctioned debt
+  debt: BigNumber;
+  // timestamp of auction
+  timestamp: BigNumber;
+}
 
 export interface IPendingTransaction {
   // Transaction hash
@@ -27,6 +34,8 @@ export interface IKeeper {
   positions: Record<string, IPosition>;
   // auctions
   auctions: Record<string, IAuction>;
-  // pending liquidations (address => gasPrice)
+  // pending liquidations (address => pending tx)
   pendingLiquidations: Record<string, IPendingTransaction>;
+  // pending auctions (address => pending tx)
+  pendingAuctions: Record<string, IPendingTransaction>;
 }

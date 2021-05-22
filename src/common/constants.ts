@@ -1,6 +1,8 @@
+// wETH in Bytes32
 export const WETH_BYTES32 =
   "0x4554482d41000000000000000000000000000000000000000000000000000000";
 
+// Contract Address constants
 export const CONTRACT_ADDRESSES = {
   mainnet: {
     controller: "0xB94199866Fe06B535d019C11247D3f921460b91A",
@@ -11,7 +13,7 @@ export const CONTRACT_ADDRESSES = {
     liquidations: "0x6E254e9130D4593561161DcFD0Ea7969C096AEfA"
   },
   development: {
-    controller: "0xB275cFd6744866977e386716dD3Aafa315Ac4e9c",
-    liquidations: "0x65d492098bC0F72A802FA3b491A67FdE59CeaB20"
+    controller: process.env.DEV_CONTROLLER_ADDR,
+    liquidations: process.env.DEV_LIQUIDATIONS_ADDR
   }
 };

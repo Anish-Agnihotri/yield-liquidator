@@ -1,10 +1,10 @@
 import { logger } from "./common/logging";
 import { ABI_CONTROLLER } from "./common/abi";
+import { Wallet } from "@ethersproject/wallet";
 import { IPosition } from "./common/interfaces";
 import { WETH_BYTES32 } from "./common/constants";
 import { Contract } from "@ethersproject/contracts";
 import { CONTRACT_ADDRESSES } from "./common/constants";
-import { Wallet } from "@ethersproject/wallet";
 
 export default class Positions {
   // Controller contract
@@ -32,7 +32,7 @@ export default class Positions {
    * @param {string} address borrower address
    * @returns {Promise<IPosition>} borrower position
    */
-  async collectPositionByAddress(address): Promise<IPosition> {
+  async collectPositionByAddress(address: string): Promise<IPosition> {
     // Collect collateralization status, posted collateral, debt
     const [collateralized, posted, debt] = await Promise.all([
       this.controller.isCollateralized(WETH_BYTES32, address),

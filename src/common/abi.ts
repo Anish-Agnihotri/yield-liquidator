@@ -1,3 +1,4 @@
+// Yield: Controller ABI
 export const ABI_CONTROLLER = [
   {
     inputs: [
@@ -481,6 +482,7 @@ export const ABI_CONTROLLER = [
   }
 ];
 
+// Yield: Liquidations ABI
 export const ABI_LIQUIDATIONS = [
   {
     inputs: [{ internalType: "address", name: "controller_", type: "address" }],

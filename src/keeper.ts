@@ -1,3 +1,4 @@
+import Auctions from "./auctions";
 import Positions from "./positions";
 import Liquidations from "./liquidations";
 import { IKeeper } from "./common/interfaces";
@@ -15,12 +16,14 @@ export default class Keeper {
     blockNumber: null,
     positions: null,
     auctions: null,
-    pendingLiquidations: null
+    pendingLiquidations: null,
+    pendingAuctions: null
   };
 
   // Providers
   positions: Positions;
   liquidations: Liquidations;
+  auctions: Auctions;
 
   constructor(rpc: string, network: string) {
     this.provider = new JsonRpcProvider(rpc);
@@ -28,6 +31,7 @@ export default class Keeper {
 
     this.positions = new Positions(this.wallet, network);
     this.liquidations = new Liquidations(this.wallet, network);
+    this.auctions = new Auctions(this.wallet, network);
   }
 
   async onBlock() {
@@ -38,7 +42,7 @@ export default class Keeper {
     this.state.blockNumber = await this.provider.getBlockNumber();
     console.log(this.state.blockNumber);
 
-    // Remove or bump all transactions
+    // TODO: Remove or bump all transactions
 
     // Collect positions from new block
     this.state.positions = await this.positions.collect();
@@ -49,7 +53,10 @@ export default class Keeper {
       this.state.gasPrice
     );
 
-    // Attempt to buy auctions if profitable
+    // Collect auctions from new block
+    this.state.auctions = await this.auctions.collect(this.state.positions);
+
+    // TODO: Attempt to buy auctions if profitable
   }
 
   async run() {
