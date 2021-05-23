@@ -3,6 +3,7 @@ import { ABI_LIQUIDATIONS } from "./common/abi";
 import { Contract } from "@ethersproject/contracts";
 import { CONTRACT_ADDRESSES } from "./common/constants";
 import { IAuction, IPosition } from "./common/interfaces";
+import { logger } from "./common/logging";
 
 export default class Auctions {
   // Liquidations contract
@@ -47,6 +48,8 @@ export default class Auctions {
   async collectAllAuctions(
     positions: Record<string, IPosition>
   ): Promise<void> {
+    logger.info("Auctions: Updating all auctions");
+
     // For each address with a position
     for (const position in positions) {
       // If the position is liquidatable

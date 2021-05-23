@@ -34,8 +34,6 @@ export interface IKeeper {
   positions: Record<string, IPosition>;
   // auctions
   auctions: Record<string, IAuction>;
-  // pending liquidations (address => pending tx)
-  pendingLiquidations: Record<string, IPendingTransaction>;
-  // pending auctions (address => pending tx)
-  pendingAuctions: Record<string, IPendingTransaction>;
+  // pending transations (address => pending tx)
+  pendingTransactions: Record<string, IPendingTransaction>;
 }

@@ -4,6 +4,7 @@ import Liquidations from "./liquidations";
 import { IKeeper } from "./common/interfaces";
 import { Wallet } from "@ethersproject/wallet";
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { logger } from "./common/logging";
 
 export default class Keeper {
   // Ethers setup
@@ -16,8 +17,7 @@ export default class Keeper {
     blockNumber: null,
     positions: null,
     auctions: null,
-    pendingLiquidations: null,
-    pendingAuctions: null
+    pendingTransactions: null
   };
 
   // Providers
@@ -30,25 +30,28 @@ export default class Keeper {
     this.wallet = new Wallet(process.env.PRIVATE_KEY, this.provider);
 
     this.positions = new Positions(this.wallet, network);
-    this.liquidations = new Liquidations(this.wallet, network);
+    this.liquidations = new Liquidations(this.provider, this.wallet, network);
     this.auctions = new Auctions(this.wallet, network);
   }
 
   async onBlock() {
-    // Collect gas price
-    this.state.gasPrice = 100;
+    // TODO: Collect gas price
+    this.state.gasPrice = 5;
 
     // Collect block number
     this.state.blockNumber = await this.provider.getBlockNumber();
-    console.log(this.state.blockNumber);
+    logger.info(`Received block ${this.state.blockNumber.toLocaleString()}`);
 
     // TODO: Remove or bump all transactions
+    this.state.pendingTransactions = await this.liquidations.bumpOrRemove(
+      this.state.gasPrice
+    );
 
     // Collect positions from new block
     this.state.positions = await this.positions.collect();
 
     // Altruistically call liquidation for any underwater position
-    this.state.pendingLiquidations = await this.liquidations.triggerLiquidations(
+    this.state.pendingTransactions = await this.liquidations.triggerLiquidations(
       this.state.positions,
       this.state.gasPrice
     );
@@ -57,6 +60,10 @@ export default class Keeper {
     this.state.auctions = await this.auctions.collect(this.state.positions);
 
     // TODO: Attempt to buy auctions if profitable
+    /*this.state.pendingTransactions = await this.liquidations.participateAuctions(
+      this.state.auctions,
+      this.state.gasPrice
+    );*/
   }
 
   async run() {

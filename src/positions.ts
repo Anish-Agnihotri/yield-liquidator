@@ -47,7 +47,7 @@ export default class Positions {
    * Stores all borrower addresses
    */
   async updateBorrowingAddresses(): Promise<void> {
-    logger.info("Updating borrowing addresses");
+    logger.info("Positions: Updating borrowing addresses");
 
     // Filter for all Borrow events
     const borrowFilter = this.controller.filters.Borrowed();
@@ -67,7 +67,7 @@ export default class Positions {
    * Stores position per borrower address
    */
   async updateBorrowingPositions(): Promise<void> {
-    logger.info("Updating borrower positions");
+    logger.info("Positions: Updating borrower positions");
 
     for (const address in this.positions) {
       // Collect and update position for each borrower address

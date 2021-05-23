@@ -13,7 +13,7 @@ export const CONTRACT_ADDRESSES = {
     liquidations: "0x6E254e9130D4593561161DcFD0Ea7969C096AEfA"
   },
   development: {
-    controller: process.env.DEV_CONTROLLER_ADDR,
-    liquidations: process.env.DEV_LIQUIDATIONS_ADDR
+    controller: "0x7B3eda1982F3A319cADc61C1dEd327a515e40844", //"0x2ed9760BC7091508C25d163dBbe0263E06313bd8",
+    liquidations: "0xBA98652E1ef0Eb90f09DDEFa37A58345977a1297" //"0xEd6C0D4FBB1ad425ee3Fd03B1FB6CD35c7660187"
   }
 };
